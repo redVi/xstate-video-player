@@ -25,8 +25,20 @@ export const playerMachine = createMachine({
 
 export const modalMachine = createMachine({
     id: 'modal',
-    initial: 'full',
+    initial: 'idle',
+    on: {
+        RESET: {
+            target: '.idle',
+        }
+    },
     states: {
+        idle: {
+            on: {
+                SHOW: {
+                    target: 'full',
+                },
+            }
+        },
         mini: {
             on: {
                 TOGGLE: {
@@ -40,6 +52,6 @@ export const modalMachine = createMachine({
                     target: 'mini',
                 },
             },
-        }
+        },
     }
 });
