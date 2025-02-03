@@ -7,21 +7,21 @@ const MediaFooter = ({ value, onToggleModal, onPlay, onPause }) => (
             type="button"
             className="ant-btn ant-btn-circle"
             onClick={onToggleModal}>
-            <ShrinkOutlined/>
+            <ShrinkOutlined />
         </Button>
         {value === 'playing' ? (
             <Button
                 type="button"
                 className="ant-btn ant-btn-circle"
                 onClick={onPause}>
-                <PauseOutlined/>
+                <PauseOutlined />
             </Button>
         ) : (
             <Button
                 type="button"
                 className="ant-btn ant-btn-circle"
                 onClick={onPlay}>
-                <CaretRightOutlined/>
+                <CaretRightOutlined />
             </Button>
         )}
     </>
