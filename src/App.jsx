@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 
 import { useActor, useMachine } from '@xstate/react';
@@ -19,16 +19,27 @@ function App() {
             actions: {
                 playVideo: () => videoRef.current?.play(),
                 pauseVideo: () => videoRef.current?.pause(),
-            }
+            },
         })
     );
 
     const toggleModal = () => setIsModalOpen(!isModalOpen);
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Space' || event.keyCode === 32) {
+            player.value === 'playing' ? onPause() : onPlay();
+        }
+    };
+
     // actions
     const onToggleModal = () => sendModal({ type: 'TOGGLE' });
     const onPlay = () => sendPlayer({ type: 'PLAY' });
     const onPause = () => sendPlayer({ type: 'PAUSE' });
+
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    });
 
     return (
         <main className="App">
@@ -48,6 +59,7 @@ function App() {
                     />}
             >
                 <div id="modal">
+                    <p>{player.value}</p>
                     <ReactHlsPlayer
                         playerRef={videoRef}
                         src={source}
