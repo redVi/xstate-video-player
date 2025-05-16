@@ -1,10 +1,10 @@
-import { useEffect, useRef } from 'react';
 import './App.css';
+import { useEffect, useRef } from 'react';
 import ReactHlsPlayer from 'react-hls-player';
 import { useMachine } from '@xstate/react';
 import { Modal } from 'antd';
 import { MediaFooter, Thumbnail } from './components';
-import { mediaMachine } from './machine/mediaMachine';
+import { mediaMachine } from './machines/mediaMachine';
 import { source } from './constants';
 
 function App() {
@@ -46,34 +46,34 @@ function App() {
 
     return (
         <main className="App">
-        <Thumbnail onClick={handleOpen}/>
+            <Thumbnail onClick={handleOpen}/>
 
-        {!isClosed && (
-            <Modal
-                title="PLAYER"
-                open
-                onCancel={handleClose}
-                width={isFull ? 1000 : 512}
-                footer={
-                    <MediaFooter
-                        isPlaying={isPlaying}
-                        isFullSize={isFull}
-                        onToggleSize={handleToggleSize}
-                        onTogglePlay={handleTogglePlay} />
-                }>
-                <div id="modal">
-                    <ReactHlsPlayer
-                        playerRef={videoRef}
-                        src={source}
-                        width="100%"
-                        height="auto"
-                        loop
-                        autoPlay
-                        onClick={handleTogglePlay} />
-                    <hr color="lightgray" size="1"/>
-                </div>
-            </Modal>
-        )}
+            {!isClosed && (
+                <Modal
+                    title="PLAYER"
+                    open
+                    onCancel={handleClose}
+                    width={isFull ? 1000 : 512}
+                    footer={
+                        <MediaFooter
+                            isPlaying={isPlaying}
+                            isFullSize={isFull}
+                            onToggleSize={handleToggleSize}
+                            onTogglePlay={handleTogglePlay} />
+                    }>
+                    <div id="modal">
+                        <ReactHlsPlayer
+                            playerRef={videoRef}
+                            src={source}
+                            width="100%"
+                            height="auto"
+                            loop
+                            autoPlay
+                            onClick={handleTogglePlay} />
+                        <hr color="lightgray" size="1"/>
+                    </div>
+                </Modal>
+            )}
         </main>
     );
 }
