@@ -1,4 +1,4 @@
-import {PlayCircleOutlined} from "@ant-design/icons";
+import { PlayCircleOutlined } from '@ant-design/icons';
 
 const Thumbnail = ({ onClick }) => (
     <div className="closed-modal" onClick={onClick}>

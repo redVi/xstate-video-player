@@ -1,5 +1,5 @@
-import Thumbnail from './Thumbnail.jsx';
-import MediaFooter from './MediaFooter.jsx';
+import Thumbnail from './Thumbnail';
+import MediaFooter from './MediaFooter';
 
 export {
     Thumbnail,

@@ -1,79 +1,79 @@
 import { useEffect, useRef } from 'react';
 import './App.css';
-
 import ReactHlsPlayer from 'react-hls-player';
-import { useActor, useMachine } from '@xstate/react';
+import { useMachine } from '@xstate/react';
 import { Modal } from 'antd';
 import { MediaFooter, Thumbnail } from './components';
-import { modalMachine, playerMachine } from './state.js';
-import { source, types } from './constants.js';
+import { mediaMachine } from './machine/mediaMachine';
+import { source } from './constants';
 
 function App() {
     const videoRef = useRef();
-    const [modal, sendModal] = useMachine(modalMachine);
-    const [player, sendPlayer] = useActor(
-        playerMachine.provide({
-            actions: {
-                playVideo: () => videoRef.current?.play(),
-                pauseVideo: () => videoRef.current?.pause(),
+    const [state, send] = useMachine(mediaMachine, {
+        actions: {
+            playVideo: () => {
+                videoRef.current?.play();
             },
-        })
-    );
+            pauseVideo: () => {
+                videoRef.current?.pause();
+            }
+        }
+    });
 
-    // actions
-    const onToggleModal = () => sendModal({ type: 'TOGGLE' });
-    const onPlay = () => sendPlayer({ type: types.PLAY });
-    const onPause = () => sendPlayer({ type: types.PAUSE });
-    const onReset = () => {
-        sendPlayer({ type: types.PAUSE });
-        sendModal({ type: types.RESET });
-    };
-    const onShow = () => sendModal({ type: types.SHOW });
-    const togglePlay = () => player.value === 'playing' ? onPause() : onPlay();
+    const isClosed = state.matches('closed');
+    const isFull = state.matches('opened.full');
+    const isPlaying = state.matches({ opened: { full: 'playing' } }) || state.matches({ opened: { mini: 'playing' } });
 
-    // stop or start video by space key
+    const handleOpen = () => send({
+        type: 'OPEN',
+        videoRef: videoRef
+    });
+    const handleClose = () => send({ type: 'CLOSE' });
+    const handleToggleSize = () => send({ type: 'TOGGLE_SIZE' });
+    const handleTogglePlay = () => send({ type: 'TOGGLE_PLAY' });
+
     const handleKeyDown = (event) => {
-        if (event.key === 'Space' || event.keyCode === 32) togglePlay();
+        if (event.key === ' ' || event.keyCode === 32) {
+            event.preventDefault();
+            handleTogglePlay();
+        }
     };
 
-    // effects
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    });
+    }, [isPlaying]);
 
     return (
         <main className="App">
-            <Thumbnail onClick={onShow}/>
+        <Thumbnail onClick={handleOpen}/>
 
-            {modal.value === 'idle' ? null : (
-                <Modal
-                    title="PLAYER"
-                    open
-                    onCancel={onReset}
-                    width={modal.value === 'full' ? 1000 : 512}
-                    footer={
-                        <MediaFooter
-                            value={player.value}
-                            onToggleModal={onToggleModal}
-                            onPlay={onPlay}
-                            onPause={onPause}
-                        />}
-                >
-                    <div id="modal">
-                        <ReactHlsPlayer
-                            playerRef={videoRef}
-                            src={source}
-                            width="100%"
-                            height="auto"
-                            loop
-                            onCanPlay={() => sendPlayer({ type: 'PLAY' })}
-                            onClick={togglePlay}
-                        />
-                        <hr color="lightgray" size="1"/>
-                    </div>
-                </Modal>
-            )}
+        {!isClosed && (
+            <Modal
+                title="PLAYER"
+                open
+                onCancel={handleClose}
+                width={isFull ? 1000 : 512}
+                footer={
+                    <MediaFooter
+                        isPlaying={isPlaying}
+                        isFullSize={isFull}
+                        onToggleSize={handleToggleSize}
+                        onTogglePlay={handleTogglePlay} />
+                }>
+                <div id="modal">
+                    <ReactHlsPlayer
+                        playerRef={videoRef}
+                        src={source}
+                        width="100%"
+                        height="auto"
+                        loop
+                        autoPlay
+                        onClick={handleTogglePlay} />
+                    <hr color="lightgray" size="1"/>
+                </div>
+            </Modal>
+        )}
         </main>
     );
 }

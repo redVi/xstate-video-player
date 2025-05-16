@@ -1,29 +1,19 @@
 import { Button } from 'antd';
-import { CaretRightOutlined, PauseOutlined, ShrinkOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, PauseOutlined, ShrinkOutlined, ArrowsAltOutlined } from '@ant-design/icons';
 
-const MediaFooter = ({ value, onToggleModal, onPlay, onPause }) => (
+const MediaFooter = ({ isPlaying, isFullSize, onToggleSize, onTogglePlay }) => (
     <>
         <Button
             type="button"
             className="ant-btn ant-btn-circle"
-            onClick={onToggleModal}>
-            <ShrinkOutlined />
-        </Button>
-        {value === 'playing' ? (
-            <Button
-                type="button"
-                className="ant-btn ant-btn-circle"
-                onClick={onPause}>
-                <PauseOutlined />
-            </Button>
-        ) : (
-            <Button
-                type="button"
-                className="ant-btn ant-btn-circle"
-                onClick={onPlay}>
-                <CaretRightOutlined />
-            </Button>
-        )}
+            onClick={onToggleSize}
+            icon={isFullSize ? <ShrinkOutlined /> : <ArrowsAltOutlined />} />
+
+        <Button
+            type="button"
+            className="ant-btn ant-btn-circle"
+            onClick={onTogglePlay}
+            icon={isPlaying ? <PauseOutlined /> : <CaretRightOutlined />} />
     </>
 );
 
