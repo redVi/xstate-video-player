@@ -1,5 +1,27 @@
 import { createMachine, assign } from 'xstate';
 
+// common states
+const mediaPlayerStates = {
+    playing: {
+        entry: ['playVideo'],
+        on: {
+            TOGGLE_PLAY: {
+                target: 'paused',
+                actions: ['pauseVideo']
+            }
+        }
+    },
+    paused: {
+        on: {
+            TOGGLE_PLAY: {
+                target: 'playing',
+                actions: ['playVideo']
+            }
+        }
+    }
+};
+
+// machine
 export const mediaMachine = createMachine({
     id: 'media',
     initial: 'closed',
@@ -21,25 +43,7 @@ export const mediaMachine = createMachine({
             states: {
                 full: {
                     initial: 'playing',
-                    states: {
-                        playing: {
-                            entry: ['playVideo'],
-                            on: {
-                                TOGGLE_PLAY: {
-                                    target: 'paused',
-                                    actions: ['pauseVideo']
-                                }
-                            }
-                        },
-                        paused: {
-                            on: {
-                                TOGGLE_PLAY: {
-                                    target: 'playing',
-                                    actions: ['playVideo']
-                                }
-                            }
-                        }
-                    },
+                    states: mediaPlayerStates,
                     on: {
                         TOGGLE_SIZE: 'mini',
                         CLOSE: {
@@ -50,25 +54,7 @@ export const mediaMachine = createMachine({
                 },
                 mini: {
                     initial: 'playing',
-                    states: {
-                        playing: {
-                            entry: ['playVideo'],
-                            on: {
-                                TOGGLE_PLAY: {
-                                    target: 'paused',
-                                    actions: ['pauseVideo']
-                                }
-                            }
-                        },
-                        paused: {
-                            on: {
-                                TOGGLE_PLAY: {
-                                    target: 'playing',
-                                    actions: ['playVideo']
-                                }
-                            }
-                        }
-                    },
+                    states: mediaPlayerStates,
                     on: {
                         TOGGLE_SIZE: 'full',
                         CLOSE: {
